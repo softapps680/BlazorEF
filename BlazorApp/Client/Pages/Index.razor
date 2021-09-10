@@ -1,0 +1,34 @@
+﻿@page "/{Id}"
+
+
+
+
+
+
+@if (showProductList)
+{
+    <Productlist Id=@Id />
+}
+
+
+
+
+
+
+@code {
+   
+    bool showProductList;
+    [Parameter]
+    public string Id { get; set; }
+
+    private List<Category> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        categories = new();
+        categories = await Http.GetFromJsonAsync<List<Category>>("api/products/getcategories");
+
+    }
+
+}

@@ -1,0 +1,54 @@
+﻿@page "/addproduct"
+
+<h3>Skapa produkt</h3>
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="@productModel" OnValidSubmit="@HandleValidSubmitAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="Name" class="form-label">Name</label>
+                <InputText class="form-control" id="name" @bind-Value="productModel.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Description" class="form-label">Description</label>
+                <InputText class="form-control" id="description" @bind-Value="productModel.Description" />
+            </div>
+            <div class="form-group">
+                <label for="ImageUrl" class="form-label">Image-url</label>
+                <InputText class="form-control" id="imageurl" @bind-Value="productModel.ImageUrl" />
+            </div>
+            <InputSelect class="form-control" id="category"  @bind-Value="productModel.categoryId">
+                @foreach (var item in categories)
+                {
+                    <option id="@item.Id" value="@item.Id">@item.CategoryName</option>
+                }
+            </InputSelect>
+            
+                
+            
+                <button class="btn btn-dark btn-sm" type="submit">Save</button>
+        </EditForm>
+            </div>
+        </div>
+
+        
+
+        @code {
+            
+            private List<Category> categories;
+            private Product productModel = new();
+            
+
+            private async Task HandleValidSubmitAsync()
+            {
+                await Http.PostAsJsonAsync("api/products", productModel);
+            }
+            protected override async Task OnInitializedAsync()
+            {
+
+                categories = new();
+                categories = await Http.GetFromJsonAsync<List<Category>>("api/products/getcategories");
+
+            }
+        }

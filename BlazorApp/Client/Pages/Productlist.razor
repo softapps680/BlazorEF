@@ -1,0 +1,58 @@
+﻿@page  "/productlist/{Id}"
+
+<h3>
+    Produkter
+    @if (string.IsNullOrEmpty(Id))
+    {
+        @:None
+    }
+    else
+    {
+        @Id
+    }
+</h3>
+
+
+@if (products == null)
+{
+    <span>Inga produkter</span>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var item in products)
+        {
+            <div class="col">
+                <div class="card shadow">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">@item.Description</p>
+                    <a href="/editproduct/@item.Id"><i class="fas fa-edit"></i></a>
+                    
+                    <a asp-controller="Products" onclick="return confirm('Are you sure you want to delete : @item.Name')" asp-action="Delete" asp-route-id=@item.Id><i class="fas fa-trash-alt"></i></a>
+                </div>
+            </div>
+
+        }
+    </div>
+}
+ <NavLink class="nav-link" href="products">
+ Back
+</NavLink>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private List<Product> products;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = new();
+        products = await Http.GetFromJsonAsync<List<Product>>($"api/products/{Id}");
+    }
+}
